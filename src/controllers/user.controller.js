@@ -22,8 +22,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
     //All data is coming from the frontend
     const { username, email, fullName, password } = req.body
-    console.log(req.body)
-    console.log(username)
+    // console.log(req.body)
+    // console.log(username)
 
     // One way of doing it : Do it individually
     // if (!username === "") {
@@ -41,12 +41,14 @@ const registerUser = asyncHandler(async (req, res) => {
     })
 
     if (userExist) {
-        throw new ApiError(409, "User with email or password already exist")
+        throw new ApiError(409, "User with email or username already exist")
     }
+
+    console.log(req.files)
 
     const avatarLocalPath = req.files?.avatar[0]?.path
 
-    const coverImageLocalPath = req.files?.avatar[0]?.path
+    const coverImageLocalPath = req.files?.coverImage[0]?.path
 
     if (!avatarLocalPath) {
         throw new ApiError(400, "Avatar is Required")
@@ -70,7 +72,7 @@ const registerUser = asyncHandler(async (req, res) => {
     })
 
 
-    const createdUser = User.findById(user._id).select(
+    const createdUser = await User.findById(user._id).select(
         "-password -refreshToken"
     )
 
